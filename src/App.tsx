@@ -1,29 +1,37 @@
-import { usePokemons } from "./hooks/usePokemons"
-import PokemonGrid from "./components/PokemonGrid"
+import SearchPokemon from "./components/SearchPokemon"
+import AddPokemonModal from "./components/AddPokemonModal"
 
 const App = () => {
 
-  const { pokemons, loading, error } = usePokemons()
+  const handleSearch = (value: string) => {
+    console.log("search:", value)
+  }
+
+  const handleAddPokemon = (pokemon: any) => {
+    console.log("new pokemon:", pokemon)
+  }
 
   return (
 
-    <div className="min-h-screen bg-base-200 p-8">
+    <div>
 
-      <h1 className="text-3xl font-bold mb-8">
-        Pokédex
-      </h1>
+      <SearchPokemon onSearch={handleSearch} />
 
-      {loading && <p>Loading...</p>}
+      <button
+        className="btn btn-primary"
+        onClick={() =>
+          (document.getElementById("pokemon_modal") as HTMLDialogElement)?.showModal()
+        }
+      >
+        Ajouter
+      </button>
 
-      {error && <p>{error}</p>}
-
-      {!loading && !error && (
-        <PokemonGrid pokemons={pokemons}/>
-      )}
+      <AddPokemonModal onAdd={handleAddPokemon} />
 
     </div>
 
   )
+
 }
 
 export default App
