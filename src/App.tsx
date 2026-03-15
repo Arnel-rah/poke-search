@@ -72,9 +72,9 @@ const App = () => {
         setLoading(false);
       }
     };
-
     fetchPokemons();
   }, []);
+
 
   // Toggle type selection
   const toggleType = (type: string) => {
