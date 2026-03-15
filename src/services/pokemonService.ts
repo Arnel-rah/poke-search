@@ -1,4 +1,4 @@
-import { Pokemon } from "../types/pokemon"
+import type { Pokemon } from "../types/pokemon"
 
 export const fetchPokemons = async (): Promise<Pokemon[]> => {
 
