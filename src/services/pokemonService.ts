@@ -1,34 +1,21 @@
 import type { Pokemon } from "../types/pokemon"
 
-export const fetchPokemons = async (): Promise<Pokemon[]> => {
-
-  const response = await fetch(
-    "https://pokeapi.co/api/v2/pokemon?limit=15"
-  )
-
-  if (!response.ok) {
-    throw new Error("HTTP Error")
-  }
-
+export const fetchPokemons = async (limit = 12): Promise<Pokemon[]> => {
+  const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`)
   const list = await response.json()
 
-  const details = await Promise.all(
-    list.results.map(async (item: { name: string; url: string }) => {
-
+  return Promise.all(
+    list.results.map(async (item: { url: string }) => {
       const res = await fetch(item.url)
-      const pokemon = await res.json()
-
+      const p = await res.json()
       return {
-        id: pokemon.id,
-        name: pokemon.name,
-        image: pokemon.sprites.other["official-artwork"].front_default,
-        types: pokemon.types.map((t: any) => t.type.name),
-        height: pokemon.height,
-        weight: pokemon.weight
-      } as Pokemon
-
+        id: p.id,
+        name: p.name,
+        image: p.sprites.other["official-artwork"].front_default,
+        types: p.types.map((t: { type: { name: string } }) => t.type.name),
+        height: p.height,
+        weight: p.weight,
+      }
     })
   )
-
-  return details
 }
