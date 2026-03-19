@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react"
+
+import { useEffect, useState, useMemo } from "react"
 import type { Pokemon } from "../types/pokemon"
 import { fetchPokemons } from "../services/pokemonService"
 
-// src/hooks/usePokemons.ts
 export const usePokemons = (search: string) => {
   const [pokemonsAPI, setPokemonsAPI] = useState<Pokemon[]>([])
   const [customPokemons, setCustomPokemons] = useState<Pokemon[]>([])
@@ -10,11 +10,24 @@ export const usePokemons = (search: string) => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    setLoading(true)
-    fetchPokemons()
-      .then(setPokemonsAPI)
-      .catch(() => setError("Impossible de charger les Pokémon"))
-      .finally(() => setLoading(false))
+    let cancelled = false
+
+    const load = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const data = await fetchPokemons()
+        if (!cancelled) setPokemonsAPI(data)
+      } catch {
+        if (!cancelled) setError("Impossible de charger les Pokémon")
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    load()
+
+    return () => { cancelled = true }
   }, [])
 
   const addPokemon = (name: string, image: string) => {
