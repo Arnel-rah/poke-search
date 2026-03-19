@@ -1,7 +1,29 @@
-export const TYPE_COLORS: Record<
-  string,
-  { bg: string; badge: string; glow: string; text: string }
-> = {
+export const POKEMON_TYPES = [
+  "fire",
+  "water",
+  "grass",
+  "electric",
+  "psychic",
+  "ice",
+  "dragon",
+  "dark",
+  "fairy",
+  "normal",
+  "fighting",
+  "flying",
+  "poison",
+  "ground",
+  "rock",
+  "bug",
+  "ghost",
+  "steel",
+] as const;
+
+export type PokemonType = (typeof POKEMON_TYPES)[number];
+
+type ThemeConfig = { bg: string; badge: string; glow: string; text: string };
+
+const TYPE_COLORS: Record<PokemonType | string, ThemeConfig> = {
   fire: {
     bg: "from-orange-950 to-red-900",
     badge: "bg-orange-500/20 text-orange-300 border-orange-500/40",
@@ -112,5 +134,5 @@ export const TYPE_COLORS: Record<
   },
 };
 
-export const getTheme = (types: string[]) =>
+export const getTheme = (types: string[]): ThemeConfig =>
   TYPE_COLORS[types[0]?.toLowerCase()] ?? TYPE_COLORS.normal;
