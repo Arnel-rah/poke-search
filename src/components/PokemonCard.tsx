@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import type { Pokemon } from "../types/pokemon"
-import { getTheme } from "../constants/typeColors"
-
+import { getTheme } from "../constants/pokemonTypes"
 interface Props {
   pokemon: Pokemon
   index: number
