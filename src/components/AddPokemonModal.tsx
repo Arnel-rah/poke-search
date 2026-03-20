@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react"
 import type { PokemonForm } from "../types/pokemon"
 
 interface Props {
-  onAdd: (pokemon: PokemonForm) => void
+  onAdd: (name: string, image: string) => void
 }
 
 const EMPTY_FORM: PokemonForm = {
