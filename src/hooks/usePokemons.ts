@@ -36,13 +36,18 @@ export const usePokemons = (search: string = "") => {
     ), [pokemons, search]
   )
 
-  const addPokemon = (form: PokemonForm) => {
-    const newPokemon: Pokemon = {
-      ...form,
-      id: Date.now()
-    }
-    setPokemons(prev => [...prev, newPokemon])
+const addPokemon = (form: PokemonForm) => {
+  const newPokemon: Pokemon = {
+    ...form,
+    id: Date.now(),
+    types: form.types
+      ? form.types.split(",").map(t => t.trim()).filter(Boolean)
+      : [],
+    height: Number(form.height) || 0,
+    weight: Number(form.weight) || 0,
   }
+  setPokemons(prev => [...prev, newPokemon])
+}
 
   return { pokemons, filteredPokemons, addPokemon, loading, error }
 }
