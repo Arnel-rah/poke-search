@@ -1,10 +1,12 @@
 import { useState } from "react"
-
-interface Props {
-  onSearch: (value: string) => void
+// SearchPokemon.tsx — ajoute value et onChange
+type Props = {
+  value: string
+  onChange: (value: string) => void
 }
 
-const SearchPokemon = ({ onSearch }: Props) => {
+
+const SearchPokemon = ({ onChange }: Props) => {
 
   const [query, setQuery] = useState("")
 
@@ -12,7 +14,7 @@ const SearchPokemon = ({ onSearch }: Props) => {
 
     const value = e.target.value
     setQuery(value)
-    onSearch(value)
+    onChange(value)
 
   }
 
