@@ -1,37 +1,26 @@
+
+import { useState } from "react"
+import { usePokemons } from "./hooks/usePokemons"
+import AppShell from "./components/layout/AppShell"
+import TopBar from "./components/layout/TopBar"
+import AppHeader from "./components/layout/AppHeader"
+import AppFooter from "./components/layout/AppFooter"
 import SearchPokemon from "./components/SearchPokemon"
-import AddPokemonModal from "./components/AddPokemonModal"
+import PokemonContent from "./components/PokemonContent"
 
 const App = () => {
-
-  const handleSearch = (value: string) => {
-    console.log("search:", value)
-  }
-
-  const handleAddPokemon = (pokemon: any) => {
-    console.log("new pokemon:", pokemon)
-  }
+  const [search, setSearch] = useState("")
+  const { filteredPokemons, loading, addPokemon } = usePokemons(search)
 
   return (
-
-    <div>
-
-      <SearchPokemon onSearch={handleSearch} />
-
-      <button
-        className="btn btn-primary"
-        onClick={() =>
-          (document.getElementById("pokemon_modal") as HTMLDialogElement)?.showModal()
-        }
-      >
-        Ajouter
-      </button>
-
-      <AddPokemonModal onAdd={handleAddPokemon} />
-
-    </div>
-
+    <AppShell>
+      <TopBar />
+      <AppHeader count={filteredPokemons.length} onAdd={addPokemon} />
+      <SearchPokemon value={search} onChange={setSearch} />
+      <PokemonContent pokemons={filteredPokemons} loading={loading} search={search} />
+      <AppFooter />
+    </AppShell>
   )
-
 }
 
 export default App

@@ -1,40 +1,48 @@
-import { useEffect, useState } from "react"
-import type { Pokemon } from "../types/pokemon"
+import { useEffect, useMemo } from "react"
+import type { Pokemon, PokemonForm } from "../types/pokemon"
 import { fetchPokemons } from "../services/pokemonService"
+import { useLocalStorage } from "./useLocalStorage"
 
-export const usePokemons = () => {
+const STORAGE_KEY = "pokedex:pokemons"
 
-  const [pokemons, setPokemons] = useState<Pokemon[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+export const usePokemons = (search: string = "") => {
+
+  const [pokemons, setPokemons] = useLocalStorage<Pokemon[]>(STORAGE_KEY, [])
+  const [loading, setLoading] = useLocalStorage<boolean>("pokedex:loading", false)
+  const [error, setError] = useLocalStorage<string | null>("pokedex:error", null)
 
   useEffect(() => {
+    if (pokemons.length > 0) return
 
     const load = async () => {
-
       setLoading(true)
-
       try {
-
         const data = await fetchPokemons()
         setPokemons(data)
         setError(null)
-
       } catch (err) {
-
         setError(err instanceof Error ? err.message : "Unknown error")
-
       } finally {
-
         setLoading(false)
-
       }
     }
 
     load()
-
   }, [])
 
-  return { pokemons, setPokemons, loading, error }
+  const filteredPokemons = useMemo(() =>
+    pokemons.filter(p =>
+      p.name.toLowerCase().includes(search.toLowerCase())
+    ), [pokemons, search]
+  )
 
+  const addPokemon = (form: PokemonForm) => {
+    const newPokemon: Pokemon = {
+      ...form,
+      id: Date.now()
+    }
+    setPokemons(prev => [...prev, newPokemon])
+  }
+
+  return { pokemons, filteredPokemons, addPokemon, loading, error }
 }

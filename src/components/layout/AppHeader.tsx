@@ -1,10 +1,10 @@
 import RuleLine from "../ui/RuleLine"
 import AddPokemonModal from "../AddPokemonModal"
-import type { Pokemon } from "../../types/pokemon"
+import type { PokemonForm } from "../../types/pokemon"
 
 type Props = {
   count: number
-  onAdd: (pokemon: Pokemon) => void
+  onAdd: (pokemon: PokemonForm) => void
 }
 
 const AppHeader = ({ count, onAdd }: Props) => (
