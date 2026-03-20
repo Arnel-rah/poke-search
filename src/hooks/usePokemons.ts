@@ -1,14 +1,19 @@
-import { useEffect, useState, useMemo } from "react"
-import type { Pokemon } from "../types/pokemon"
+import { useEffect, useMemo } from "react"
+import type { Pokemon, PokemonForm } from "../types/pokemon"
 import { fetchPokemons } from "../services/pokemonService"
+import { useLocalStorage } from "./useLocalStorage"
+
+const STORAGE_KEY = "pokedex:pokemons"
 
 export const usePokemons = (search: string = "") => {
 
-  const [pokemons, setPokemons] = useState<Pokemon[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [pokemons, setPokemons] = useLocalStorage<Pokemon[]>(STORAGE_KEY, [])
+  const [loading, setLoading] = useLocalStorage<boolean>("pokedex:loading", false)
+  const [error, setError] = useLocalStorage<string | null>("pokedex:error", null)
 
   useEffect(() => {
+    if (pokemons.length > 0) return
+
     const load = async () => {
       setLoading(true)
       try {
@@ -21,6 +26,7 @@ export const usePokemons = (search: string = "") => {
         setLoading(false)
       }
     }
+
     load()
   }, [])
 
@@ -30,8 +36,12 @@ export const usePokemons = (search: string = "") => {
     ), [pokemons, search]
   )
 
-  const addPokemon = (pokemon: Pokemon) => {
-    setPokemons(prev => [...prev, pokemon])
+  const addPokemon = (form: PokemonForm) => {
+    const newPokemon: Pokemon = {
+      ...form,
+      id: Date.now()
+    }
+    setPokemons(prev => [...prev, newPokemon])
   }
 
   return { pokemons, filteredPokemons, addPokemon, loading, error }
