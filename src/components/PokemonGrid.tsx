@@ -1,81 +1,67 @@
-import { useEffect, useRef, useState } from "react"
 import type { Pokemon } from "../types/pokemon"
 import PokemonCard from "./PokemonCard"
 
 interface Props {
   pokemons: Pokemon[]
+  search: string
 }
 
-const PokemonGrid = ({ pokemons }: Props) => {
-  const [visibleIds, setVisibleIds] = useState<Set<number>>(new Set())
-  const refs = useRef<Map<number, HTMLDivElement>>(new Map())
+const EmptyState = ({ search }: { search: string }) => (
+  <div style={{
+    display: "flex", flexDirection: "column", alignItems: "center",
+    justifyContent: "center", padding: "96px 0", gap: 20
+  }}>
+    <div style={{
+      width: 64, height: 64, borderRadius: "50%",
+      border: "1px solid rgba(255,160,20,0.12)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      background: "rgba(255,160,20,0.03)",
+    }}>
+      <span style={{ fontSize: 24, color: "rgba(255,160,20,0.2)" }}>◎</span>
+    </div>
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = Number((entry.target as HTMLElement).dataset.id)
-            setVisibleIds((prev) => new Set(prev).add(id))
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.1 }
-    )
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+      <p style={{
+        fontFamily: "'Playfair Display', serif",
+        fontStyle: "italic",
+        fontSize: 16,
+        color: "rgba(180,160,120,0.4)",
+        margin: 0
+      }}>
+        {search ? `Aucun spécimen trouvé` : "Collection vide"}
+      </p>
+      {search && (
+        <p style={{
+          fontFamily: "'DM Mono', monospace",
+          fontSize: 10,
+          letterSpacing: "0.15em",
+          color: "rgba(255,160,20,0.25)",
+          margin: 0
+        }}>
+          pour « {search} »
+        </p>
+      )}
+    </div>
 
-    refs.current.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [pokemons])
+    <div style={{
+      height: 1, width: 80,
+      background: "linear-gradient(to right, transparent, rgba(255,160,20,0.2), transparent)"
+    }} />
+  </div>
+)
+
+const PokemonGrid = ({ pokemons, search }: Props) => {
+  if (pokemons.length === 0) return <EmptyState search={search} />
 
   return (
-    <div className="min-h-screen px-4 py-10">
-      <div className="max-w-7xl mx-auto mb-10 flex flex-col items-center gap-2">
-        <p className="text-xs font-mono tracking-[0.25em] text-white/30 uppercase">
-          Pokédex
-        </p>
-        <h1
-          className="text-3xl font-black text-white tracking-tight"
-          style={{ fontFamily: "'Segoe UI', system-ui, sans-serif" }}
-        >
-          {pokemons.length}{" "}
-          <span className="text-white/30 font-light">Pokémon</span>
-        </h1>
-        <div className="mt-2 h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-      </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 max-w-7xl mx-auto">
-        {pokemons.map((pokemon, index) => {
-          const isVisible = visibleIds.has(pokemon.id)
-          return (
-            <div
-              key={pokemon.id}
-              data-id={pokemon.id}
-              ref={(el) => {
-                if (el) refs.current.set(pokemon.id, el)
-                else refs.current.delete(pokemon.id)
-              }}
-              style={{
-                transitionDelay: `${(index % 12) * 40}ms`,
-                transition: "opacity 0.5s ease, transform 0.5s ease",
-                opacity: isVisible ? 1 : 0,
-                transform: isVisible ? "translateY(0)" : "translateY(20px)",
-              }}
-            >
-              <PokemonCard pokemon={pokemon} />
-            </div>
-          )
-        })}
-      </div>
-
-      {pokemons.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-32 gap-3">
-          <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center">
-            <span className="text-2xl opacity-30">?</span>
-          </div>
-          <p className="text-white/30 text-sm tracking-wide">Aucun Pokémon trouvé</p>
-        </div>
-      )}
-
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
+      gap: 12,
+    }}>
+      {pokemons.map((pokemon, index) => (
+        <PokemonCard key={pokemon.id} pokemon={pokemon} index={index} />
+      ))}
     </div>
   )
 }

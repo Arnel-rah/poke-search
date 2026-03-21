@@ -3,6 +3,7 @@ import type { Pokemon } from "../types/pokemon"
 
 interface Props {
   pokemon: Pokemon
+  index: number 
 }
 
 const TYPE_COLORS: Record<string, { bg: string; badge: string; glow: string; text: string }> = {
