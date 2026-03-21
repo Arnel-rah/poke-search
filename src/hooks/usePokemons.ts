@@ -36,10 +36,15 @@ export const usePokemons = (search: string = "") => {
     ), [pokemons, search]
   )
 
+// src/hooks/usePokemons.ts
 const addPokemon = (form: PokemonForm) => {
+  const nextId = pokemons.length > 0
+    ? Math.max(...pokemons.map(p => p.id)) + 1
+    : 1
+
   const newPokemon: Pokemon = {
     ...form,
-    id: Date.now(),
+    id: nextId,
     types: form.types
       ? form.types.split(",").map(t => t.trim()).filter(Boolean)
       : [],
