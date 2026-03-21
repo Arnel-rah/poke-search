@@ -3,7 +3,7 @@ import type { Pokemon, PokemonForm } from "../types/pokemon"
 import { fetchPokemons } from "../services/pokemonService"
 import { useLocalStorage } from "./useLocalStorage"
 
-const STORAGE_KEY = "pokedex:pokemons"
+const STORAGE_KEY = "pokedex:pokemons:v2";
 
 export const usePokemons = (search: string = "") => {
 
