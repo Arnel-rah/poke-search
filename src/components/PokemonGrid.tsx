@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from "react"
 import type { Pokemon } from "../types/pokemon"
 import PokemonCard from "./PokemonCard"
 
