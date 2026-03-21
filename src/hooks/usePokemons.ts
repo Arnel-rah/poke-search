@@ -36,23 +36,23 @@ export const usePokemons = (search: string = "") => {
     ), [pokemons, search]
   )
 
-// src/hooks/usePokemons.ts
-const addPokemon = (form: PokemonForm) => {
-  const nextId = pokemons.length > 0
-    ? Math.max(...pokemons.map(p => p.id)) + 1
-    : 1
-
-  const newPokemon: Pokemon = {
-    ...form,
-    id: nextId,
-    types: form.types
-      ? form.types.split(",").map(t => t.trim()).filter(Boolean)
-      : [],
-    height: Number(form.height) || 0,
-    weight: Number(form.weight) || 0,
+  const addPokemon = (form: PokemonForm) => {
+    setPokemons(prev => {
+      const nextId = prev.length > 0
+        ? Math.max(...prev.map(p => p.id)) + 1
+        : 1
+      const newPokemon: Pokemon = {
+        ...form,
+        id: nextId,
+        types: form.types
+          ? form.types.split(",").map(t => t.trim()).filter(Boolean)
+          : [],
+        height: Number(form.height) || 0,
+        weight: Number(form.weight) || 0,
+      }
+      return [...prev, newPokemon]
+    })
   }
-  setPokemons(prev => [...prev, newPokemon])
-}
 
   return { pokemons, filteredPokemons, addPokemon, loading, error }
 }
